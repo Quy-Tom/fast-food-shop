@@ -2,10 +2,10 @@ import { Module, NestModule, MiddlewareConsumer,RequestMethod } from '@nestjs/co
 import { createObserveModule } from '@nestjs/observe';
 import { LoggerMiddleware } from './middleware/logger.middleware.js';
 import { UserModule } from './modules/user/user.module.js';
-import { AuthModule } from './modules/auth/auth.module.js';
 import { SequelizeModule, SequelizeModuleOptions } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { sequelizeConfig } from './config/sequelize.config.js';
+import { CategoryModule } from './modules/category/category.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -19,13 +19,13 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       serviceId: 'fast_food_shop',
     }),
     ConfigModule.forRoot(),
-    UserModule,
-    AuthModule,
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService): SequelizeModuleOptions => sequelizeConfig(configService),
     }),
+    UserModule,
+    CategoryModule,
   ],
 })
 export class AppModule implements NestModule {
