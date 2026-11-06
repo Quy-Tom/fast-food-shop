@@ -23,4 +23,10 @@ export class User extends Model {
   @HasOne(() => Cart) declare cart: CartType;
   @HasMany(() => Order) declare orders: OrderType[];
   @HasMany(() => Review) declare reviews: ReviewType[];
+
+  
+  getUserWithoutPassword() {
+    const { passwordHash: _, ...rest } = this.get({ plain: true });
+    return rest;
+  }
 }

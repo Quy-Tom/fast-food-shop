@@ -1,11 +1,15 @@
 import { Module, NestModule, MiddlewareConsumer,RequestMethod } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { LoggerMiddleware } from './middleware/logger.middleware.js';
-import { UserModule } from './modules/user/user.module.js';
 import { SequelizeModule, SequelizeModuleOptions } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { sequelizeConfig } from './config/sequelize.config.js';
 import { CategoryModule } from './modules/category/category.module.js';
+import { UserModule } from './modules/user/user.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { JwtModule } from '@nestjs/jwt';
+import { StringValue } from 'ms';
+import { ProductModule } from './modules/product/product.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -18,14 +22,26 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: 'YOUR_APP_SECRET',
       serviceId: 'fast_food_shop',
     }),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService): SequelizeModuleOptions => sequelizeConfig(configService),
     }),
-    UserModule,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<StringValue>('JWT_EXPIRES_IN'),
+        },
+      }),
+      global: true
+    }),
     CategoryModule,
+    UserModule,
+    AuthModule,
+    ProductModule,
   ],
 })
 export class AppModule implements NestModule {

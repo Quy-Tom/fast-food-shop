@@ -1,25 +1,24 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
+import { NumberNotRequired, StringRequired } from "../../../common/decorators/index.js";
 
 export class CreateCategoryDto {
-  @IsString({message: 'Name must be a string'})  
-  @IsNotEmpty({message: 'Name is required'})
+  @StringRequired('name')
   name: string;
 
-  @IsString({message: 'Description must be a string'})
-  @IsOptional()
+  @StringRequired('description')
   description?: string;
 
+  @ApiProperty()
   @IsString()
   @IsOptional()
   imageUrl?: string;
 
-  @IsNumber()
+  @ApiProperty()
   @IsOptional()
   isActive?: boolean;
 
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
+  @NumberNotRequired
   sortOrder?: number;
 }

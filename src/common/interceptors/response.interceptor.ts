@@ -12,6 +12,8 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
         return 'Resource created successfully';
       case 'PUT':
         return 'Resource updated successfully';
+      case 'PATCH':
+        return 'Resource updated successfully';
       case 'DELETE':
         return 'Resource deleted successfully';
       default:

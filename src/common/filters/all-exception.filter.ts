@@ -5,7 +5,7 @@ import { ApiResponse } from '../../interfaces/index.js';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
-  constructor(private readonly logger: Logger) {}
+  private readonly logger = new Logger(AllExceptionFilter.name);
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -13,7 +13,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     let status: number;
-    let message: string;
+    let message: string = "Error occurred";
     let error: any;
 
     if (exception instanceof HttpException) {
@@ -38,15 +38,15 @@ export class AllExceptionFilter implements ExceptionFilter {
       this.logger.error(`Unexpected error: ${exception}`);
     }
 
-    // const errorResponse: ApiResponse<any> = {
-    //   success: false,
-    //   status,
-    //   message,
-    //   ...(error && error),
-    //   date: new Date(),
-    //   path: request.url
-    // };
+    const errorResponse: ApiResponse<any> = {
+      success: false,
+      status,
+      message,
+      ...(error && {error}),
+      date: new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour12: false }),
+      path: request.url
+    };
 
-    //response.status(status).json(errorResponse);
+    response.status(status).json(errorResponse);
   }
 }

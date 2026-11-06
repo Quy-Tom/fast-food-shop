@@ -7,7 +7,7 @@ export class LoggerMiddleware implements NestMiddleware {
     const startTime = Date.now();
     res.on('finish', () => {
       const elapsedTime = Date.now() - startTime;
-      console.log(`Fast food shop: [${new Date().toISOString()}] ${req.method} ${req.url} ${req.path} ${req.originalUrl} - ${res.statusCode} - ${elapsedTime}ms`);
+      console.log(`Fast food shop: [${new Date().toISOString()}] ${req.method} ${req.url} - ${res.statusCode} - ${elapsedTime}ms`);
     });
     next();
   }

@@ -27,6 +27,7 @@ export const sequelizeConfig = (
 
     autoLoadModels: true,
     synchronize: true,
+    sync: { alter: false }, // Set to false to prevent automatic schema changes in production
     logging: false,
     models: databaseModels,
   };

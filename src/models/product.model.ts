@@ -1,9 +1,10 @@
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany, BelongsToMany } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany, BelongsToMany, BeforeCreate, AfterCreate, BeforeValidate } from 'sequelize-typescript';
 import { Category } from './category.model.js';
 import { ProductVariant } from './product-variant.model.js';
 import { Topping } from './topping.model.js';
 import { ProductTopping } from './product-topping.model.js';
 import { Review } from './review.model.js';
+import { Helper } from '../utils/helpers.js';
 
 import type { Category as CategoryType } from './category.model.js';
 import type { ProductVariant as ProductVariantType } from './product-variant.model.js';
@@ -23,4 +24,13 @@ export class Product extends Model {
   @HasMany(() => ProductVariant) declare variants: ProductVariantType[];
   @BelongsToMany(() => Topping, () => ProductTopping) declare toppings: ToppingType[];
   @HasMany(() => Review) declare reviews: ReviewType[];
+
+  @BeforeValidate
+  static CreateSlug(instance: Product) {
+    if (instance.name) {
+      instance.slug = Helper.makeSlugFromString(instance.name);
+    }
+  }
 }
+
+
