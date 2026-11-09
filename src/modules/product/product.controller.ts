@@ -1,10 +1,11 @@
-import { Controller, Post, UseGuards, Body } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Param, Get, Query, Delete } from '@nestjs/common';
 import { ProductService } from './product.service.js';
 import { RolesGuard } from '../auth/guards/roles.guard.js';
 import { CreateProductDto } from './dto/create-product.dto.js';
 import { Roles } from '../../common/decorators/roles.decorator.js';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard.js';
+import { FilterProductDto } from './dto/filter-product.js';
 
 @Controller('product')
 export class ProductController {
@@ -17,5 +18,25 @@ export class ProductController {
   @Post('create')
   async create(@Body() createProductDto: CreateProductDto) {
     return await this.productService.create(createProductDto);
+  }
+
+  @Get('one/:id')
+  async findOne(@Param('id') id: number) {
+    return await this.productService.findOne(id);
+  }
+
+  @Get('search')
+  async findAll(@Query() filterProductDto: FilterProductDto) {
+    return await this.productService.findAll(filterProductDto);
+  }
+
+  @Delete('soft/:id')
+  async deleteSoft(@Param('id') id: number) {
+    return await this.productService.removeSoft(id);
+  }
+
+  @Delete('hard/:id')
+  async deleteHard(@Param('id') id: number) {
+    return await this.productService.removeHard(id);
   }
 }

@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
+import { IsEnum, IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
 
 export const StringRequired = (name: string) => 
     applyDecorators(
@@ -12,13 +12,14 @@ export const StringRequired = (name: string) =>
 
 export const StringNotRequired = (name: string) => 
     applyDecorators(
-        ApiProperty({ description: name, required: true }),
+        ApiProperty({ description: name, required: false }),
+        IsOptional(),
         IsString({ message: `${name} must be a string` }),
 );
 
 export const NumberNotRequired  =
     applyDecorators(
-        ApiProperty(),
+        ApiProperty({required: false}),
         IsOptional(),
         IsNumber(),
         Type(() => Number)
@@ -47,5 +48,28 @@ export const ArrayNotRequired = (type: any) => applyDecorators(
     ValidateNested({each: true}),
     Type(() => type)
 )
+
+export const EnumNotRequired = (name: string, enumType: object) =>
+    applyDecorators(
+        ApiPropertyOptional({
+            description: name,
+            enum: enumType,
+        }),
+        IsOptional(),
+        IsEnum(enumType, {
+            message: `${name} must be a valid enum value`,
+        }),
+    );
+
+export const EnumRequired = (name: string, enumType: object) =>
+    applyDecorators(
+        ApiProperty({
+            description: name,
+            enum: enumType,
+        }),
+        IsEnum(enumType, {
+            message: `${name} must be a valid enum value`,
+        }),
+    );
 
 
